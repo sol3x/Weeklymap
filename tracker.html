@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ترکر برنامه هفتگی</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .highlight {
+            background-color: #d3d3d3 !important; /* تغییر رنگ هایلایت به طوسی */
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+        .reset-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        @media (max-width: 600px) {
+            table {
+                font-size: 12px;
+            }
+            input[type="checkbox"] {
+                width: 15px;
+                height: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h2>ترکر برنامه هفتگی - ۳۰ روز</h2>
+<div class="container">
+    <table id="tracker">
+        <thead>
+            <tr>
+                <th>روز</th>
+                <th>روز هفته</th>
+                <th>۹:۳۰ - ۱۴</th>
+                <th>۱۴ - ۱۷</th>
+                <th>۱۷:۳۰ - ۲۱</th>
+                <th>۲۱ به بعد</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<button class="reset-btn" onclick="resetTracker()">پاک کردن اطلاعات</button>
+
+<script>
+    const schedule = [
+        ["اصلاح استراتژی", "ترید / تحلیل استراتژی", "اصلاح استراتژی", "آزاد"], // جمعه
+        ["کار", "استراحت / کارهای شخصی", "کار", "اصلاح استراتژی"], // شنبه
+        ["کار", "ترید / تحلیل استراتژی", "کار", "اصلاح استراتژی"], // یکشنبه
+        ["کار", "استراحت / کارهای شخصی", "کار", "اصلاح استراتژی"], // دوشنبه
+        ["کار", "ترید / تحلیل استراتژی", "کار", "اصلاح استراتژی"], // سه‌شنبه
+        ["کار", "ترید / تحلیل استراتژی", "کار", "اصلاح استراتژی"], // چهارشنبه
+        ["کار", "ترید / تحلیل استراتژی", "کار", "اصلاح استراتژی"]  // پنج‌شنبه
+    ];
+
+    function loadTracker() {
+        const tableBody = document.querySelector("#tracker tbody");
+        tableBody.innerHTML = "";
+
+        // برای ۳۰ روز از جمعه شروع می‌کنیم
+        for (let i = 0; i < 30; i++) {
+            let row = document.createElement("tr");
+            let dayOfWeekIndex = i % 7;
+            let dayOfWeekName = getDayOfWeekName(dayOfWeekIndex); // اسم روز هفته
+
+            let dailySchedule = schedule[dayOfWeekIndex];
+
+            row.innerHTML = `<td>روز ${i + 1}</td>`;
+            row.innerHTML += `<td>${dayOfWeekName}</td>`;
+
+            dailySchedule.forEach((task, index) => {
+                let checked = localStorage.getItem(`day${i}-task${index}`) === "true" ? "checked" : "";
+                row.innerHTML += `<td>${task} <input type="checkbox" data-day="${i}" data-task="${index}" ${checked}></td>`;
+            });
+
+            // هایلایت روز جمعه
+            if (i === 0) {
+                row.classList.add("highlight");
+            }
+
+            tableBody.appendChild(row);
+        }
+    }
+
+    function getDayOfWeekName(index) {
+        const daysOfWeek = ["جمعه", "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"];
+        return daysOfWeek[index];
+    }
+
+    function resetTracker() {
+        localStorage.clear();
+        loadTracker();
+    }
+
+    // لیست چک باکس‌ها
+    document.querySelectorAll("input[type='checkbox']").forEach(input => {
+        input.addEventListener("change", function() {
+            localStorage.setItem(`day${this.dataset.day}-task${this.dataset.task}`, this.checked);
+        });
+    });
+
+    window.onload = loadTracker;
+</script>
+
+</body>
+</html>
