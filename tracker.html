@@ -134,11 +134,13 @@
         loadTracker();
     }
 
-    // لیست چک باکس‌ها
-    document.querySelectorAll("input[type='checkbox']").forEach(input => {
-        input.addEventListener("change", function() {
-            localStorage.setItem(`day${this.dataset.day}-task${this.dataset.task}`, this.checked);
-        });
+    // ذخیره کردن وضعیت چک باکس‌ها در localStorage
+    document.querySelector("#tracker").addEventListener("change", function(event) {
+        if (event.target.type === "checkbox") {
+            const day = event.target.dataset.day;
+            const task = event.target.dataset.task;
+            localStorage.setItem(`day${day}-task${task}`, event.target.checked);
+        }
     });
 
     window.onload = loadTracker;
